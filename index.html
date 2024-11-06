@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Señal Senoidal y Circuito RLC</title>
+    <style>
+        .Link__github {
+            position: fixed;
+            /* Mantiene el botón fijo en la pantalla */
+            top: 1em;
+            /* Posición desde la parte superior */
+            left: 1em;
+            /* Posición desde el lado izquierdo */
+            display: flex;
+            flex-direction: row;
+            gap: 0.5em;
+            /* Espacio entre íconos y texto */
+            padding: 0.5em 0.8em;
+            /* Espaciado interno */
+            outline: none;
+            border: none;
+            background: white;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+                rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+            transition: background-color 0.2s ease-in-out, transform 0.1s;
+            font-size: 1em;
+            /* Tamaño de fuente */
+            border-radius: 0.5em;
+            /* Bordes redondeados */
+            z-index: 1000;
+            /* Asegura que esté encima de otros elementos */
+        }
+
+        .Link__github:hover {
+            cursor: pointer;
+            background-color: black;
+            /* Cambiar color de fondo al pasar el ratón */
+        }
+
+        .Link__github:hover .github {
+            fill: white;
+            /* Cambiar color del ícono en hover */
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 600px) {
+            .Link__github {
+                font-size: 0.9em;
+                /* Tamaño de fuente para pantallas pequeñas */
+            }
+        }
+
+
+        /* General body in dark mode */
+        body.dark-mode {
+            background-color: #1e1e2f;
+            color: #dcdce2;
+        }
+
+        /* GitHub link button */
+
+        body.dark-mode .Link__github {
+            position: fixed;
+            /* Mantiene el botón fijo en la pantalla */
+            top: 1em;
+            /* Posición desde la parte superior */
+            left: 1em;
+            /* Posición desde el lado izquierdo */
+            display: flex;
+            flex-direction: row;
+            gap: 0.5em;
+            /* Espacio entre íconos y texto */
+            padding: 0.5em 0.8em;
+            /* Espaciado interno */
+            outline: none;
+            border: none;
+            background: #1e1e2f;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+                rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+            transition: background-color 0.2s ease-in-out, transform 0.1s;
+            font-size: 1em;
+            /* Tamaño de fuente */
+            border-radius: 0.5em;
+            /* Bordes redondeados */
+            z-index: 1000;
+            /* Asegura que esté encima de otros elementos */
+        }
+
+        body.dark-mode .Link__github:hover .github {
+            fill: #00ffea;
+        }
+
+        /* Headers */
+        body.dark-mode h2 {
+            color: #f0f0f0;
+        }
+
+        /* Buttons */
+        body.dark-mode button {
+            background: #222233;
+            color: #dcdce2;
+            border: 1px solid #00ffea;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 234, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Button active state */
+        .dark-mode button:active {
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0, 255, 234, 0.7);
+        }
+
+        /* Hover effect with ripple animation */
+        .dark-mode button:before,
+        .dark-mode button:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(0, 255, 234, 0.2);
+            z-index: -1;
+            transform: scale(0);
+            transition: transform 0.5s;
+            border-radius: inherit;
+        }
+
+        .dark-mode button:before {
+            transition-delay: 0s;
+        }
+
+        .dark-mode button:after {
+            transition-delay: 0.25s;
+        }
+
+        .dark-mode button:hover:before,
+        .dark-mode button:hover:after {
+            transform: scale(1.2);
+        }
+
+        /* Sections */
+        body.dark-mode .section {
+            background: #29293a;
+            color: #dcdce2;
+            border-radius: 8px;
+            padding: 1em;
+            margin: 1em 0;
+        }
+
+        /* Search and results areas */
+        body.dark-mode #resultado_de_buscador,
+        body.dark-mode #resultados,
+        body.dark-mode #resultados_paso_paso_rlc,
+        body.dark-mode #menu_main {
+            background-color: #2d2d3c;
+            color: #dcdce2;
+            border-radius: 8px;
+            padding: 1em;
+        }
+
+        /* Form elements */
+        body.dark-mode select,
+        body.dark-mode input {
+            background-color: #33334a;
+            color: #dcdce2;
+            border: 1px solid #444455;
+            padding: 0.5em;
+            border-radius: 4px;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eaeaea;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            margin: 0;
+        }
+
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Menú principal */
+        #menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Botones */
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 14px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Contenedor principal */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .section {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .section:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Gráficos */
+        canvas {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        /* Inputs */
+        label {
+            font-weight: bold;
+            margin: 10px 0 5px;
+            display: block;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* Resultados */
+        #resultado_de_buscador,
+        #menu_main {
+            font-size: 1.2em;
+            color: #333;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            width: 95%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: center;
+            line-height: 1.5;
+            float: center;
+        }
+
+        #resultados_paso_paso_rlc,
+        #resultados {
+            font-size: 1em;
+            color: #333;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 15px;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        /* Clase oculta */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="menu_main">
+        <a href="https://github.com/MiguelVeraXd" target="_blank" rel="noopener noreferrer" class="Link__github">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30px" height="30px" class="github">
+                <path
+                    d="M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z">
+                </path>
+            </svg>
+        </a>
+
+        <button onclick="mostrarSeccion('ohm')">Ley de Ohm</button>
+        <button onclick="mostrarSeccion('rlc')">Circuito RLC y Señal Senoidal</button>
+        <button onclick="toggleTheme()">Cambiar Tema</button>
+    </div>
+
+    <!-- Sección de Ric -->
+    <div id="palabra" style="display: none;">
+        <h2>Buscador de Palabras</h2>
+        <input type="text" id="buscador" placeholder="Escribe una palabra...">
+        <button onclick="buscarPalabra()">Buscar</button>
+
+        <div class="capitulo">
+            <button onclick="toggleCapitulo('capitulo1')">Toggle Capítulo 1</button>
+            <div id="capitulo1" class="hidden">
+                <p>
+                    La Ley de Ohm establece que la corriente que pasa a través de un conductor entre dos puntos es
+                    directamente proporcional a la tensión entre esos dos puntos.
+                </p>
+            </div>
+        </div>
+
+        <div class="capitulo">
+            <button onclick="toggleCapitulo('capitulo2')">Toggle Capítulo 2</button>
+            <div id="capitulo2" class="hidden">
+                <p>
+                    El Circuito RLC es un circuito eléctrico que contiene una resistencia (R), un inductor (L) y un
+                    condensador (C).
+                </p>
+            </div>
+        </div>
+
+        <div class="capitulo">
+            <button onclick="toggleCapitulo('capitulo3')">Toggle Capítulo 3</button>
+            <div id="capitulo3" class="hidden">
+                <p>
+                    Los componentes eléctricos son fundamentales para entender cómo funciona un circuito.
+                </p>
+            </div>
+        </div>
+
+        <!-- Inserción del PDF desde un enlace externo -->
+        <h2>Documento PDF</h2>
+        <embed
+            src="https://ingenieriaproservices.cl/wp-content/uploads/2024/01/Presentacion-RIC-01_-Empalmes_250521.pdf"
+            width="600" height="400" type="application/pdf">
+    </div>
+
+
+    <!-- Sección de Circuito RLC -->
+    <div id="rlc" style="display: none;">
+        <h2>Análisis de Señal Senoidal y Circuito RLC</h2>
+        <div class="container">
+            <div class="section">
+                <h3>Configuración del Circuito RLC</h3>
+                <label for="voltaje_rms">Voltaje RMS (V):</label>
+                <input type="number" id="voltaje_rms" value="120">
+
+                <label for="voltaje_max">Voltaje Máximo (V):</label>
+                <input type="number" id="voltaje_max" value="169.7">
+                <div id="resistencias">
+                    <label>Resistencias (R):</label>
+                    <div class="resistencia">
+                        <input type="number" class="valor_resistencia" value="10">
+                        <select class="unidadResistencia">
+                            <option value="1">Ω</option>
+                            <option value="1e3">kΩ</option>
+                            <option value="1e6">MΩ</option>
+                            <option value="1e-1">dΩ</option>
+                            <option value="1e-2">cΩ</option>
+                            <option value="1e-3">mΩ</option>
+                            <option value="1e-6">µΩ</option>
+                            <option value="1e-9">nΩ</option>
+                        </select>
+                        <button class="small-button" onclick="eliminarComponente(this, 'resistencia')">Eliminar</button>
+                    </div>
+                </div>
+                <button class="small-button" onclick="agregarComponente('resistencia')">Agregar Resistencia</button>
+
+                <div id="capacitancias">
+                    <label>Capacitancias (C):</label>
+                    <div class="capacitancia">
+                        <input type="number" class="valor_capacitancia" value="1">
+                        <select class="unidadCapacitancia">
+                            <option value="1">F</option>
+                            <option value="1e3">kF</option>
+                            <option value="1e6">MF</option>
+                            <option value="1e-1">dF</option>
+                            <option value="1e-2">cF</option>
+                            <option value="1e-3">mF</option>
+                            <option value="1e-6">µF</option>
+                            <option value="1e-9">nF</option>
+                        </select>
+                        <button class="small-button"
+                            onclick="eliminarComponente(this, 'capacitancia')">Eliminar</button>
+                    </div>
+                </div>
+                <button class="small-button" onclick="agregarComponente('capacitancia')">Agregar Capacitancia</button>
+
+                <label for="inductancia">Inductancia (L):</label>
+                <input type="number" id="inductancia" value="0.10">
+                <select id="unidadInductancia">
+                    <option value="1">H</option>
+                    <option value="1e3">kH</option>
+                    <option value="1e6">MH</option>
+                    <option value="1e-1">dH</option>
+                    <option value="1e-2">cH</option>
+                    <option value="1e-3">mH</option>
+                    <option value="1e-6">µH</option>
+                    <option value="1e-9">nH</option>
+                </select>
+
+                <label for="frecuenciaRLC">Frecuencia (Hz):</label>
+                <input type="number" id="frecuenciaRLC" value="50">
+                <select id="tipoConexion_rlc_mode">
+                    <option value="serie">Serie</option>
+                    <option value="paralelo">Paralelo</option>
+                </select>
+                <button onclick="calcularImpedancia()">Calcular Impedancia y Parámetros</button>
+            </div>
+
+            <div class="Paso a Paso Circuito RLC">
+                <div id="resultados"></div>
+                <button onclick="copiarAlPortapapeles()">Copiar todo</button>
+            </div>
+
+            <div class="grafico section">
+                <h3>Gráfico de la Señal Senoidal</h3>
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div class="section">
+                <h3>Configuración de la Señal Senoidal 1</h3>
+                <label for="amplitud1">Amplitud (V/A):</label>
+                <input type="number" id="amplitud1" value="24">
+                <label for="frecuenciaSen1">Frecuencia (Hz):</label>
+                <input type="number" id="frecuenciaSen1" value="0">
+                <label for="omegaSen1">ω (Rad / segundos):</label>
+                <input type="number" id="omegaSen1" value="50">
+                <label for="fase1">Desfase (φ) (Introduce como múltiplo de π, ej. 1.57 para π/2):</label>
+                <input type="number" id="fase1" value="0">
+                <button onclick="actualizarGrafico()">Actualizar Gráfico</button>
+            </div>
+
+            <div class="complejo section">
+                <h3>Conversión de Números Complejos</h3>
+                <div>
+                    <label for="modulo">Módulo (r):</label>
+                    <input type="number" id="modulo" value="5">
+                    <label for="angulo">Ángulo (θ):</label>
+                    <input type="number" id="angulo" value="0.927">
+                    <button onclick="convertirARectangular()">Convertir a Rectangular</button>
+                    <p id="rectangularOutput"></p>
+                </div>
+                <h3>Plano Complejo</h3>
+                <!-- Aumentar el tamaño del canvas para el plano complejo -->
+                <canvas id="complexPlane" width="800" height="800"></canvas>
+                <div>
+                    <label for="real">Parte Real (x):</label>
+                    <input type="number" id="real" value="3">
+                    <label for="imag">Parte Imaginaria (y):</label>
+                    <input type="number" id="imag" value="4">
+                    <button onclick="convertirAPolar()">Convertir a Polar</button>
+                    <p id="polarOutput"></p>
+                </div>
+            </div>
+
+            <div class="Paso a Paso Circuito RLC">
+                <div id="resultados_paso_paso_rlc"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Ley de Ohm -->
+    <div id="ohm" style="display: none;">
+        <h2>Cálculo de Ley de Ohm</h2>
+        <div class="container">
+            <div class="section">
+                <h3>Cálculo de Ley de Ohm</h3>
+                <label for="voltaje_ley_ohm">Voltaje (V):</label>
+                <input type="number" id="voltaje_ley_ohm">
+
+                <label for="corriente_ley_ohm">Corriente (I):</label>
+                <input type="number" id="corriente_ley_ohm">
+
+                <div id="resistencia_ley_ohm">
+                    <label>Resistencias (R):</label>
+                    <div class="resistencia_ley_ohm">
+                        <input type="number" class="valor_resistencia_ley_ohm" value="10">
+                        <select class="unidadResistencia">
+                            <option value="1">Ω</option>
+                            <option value="1e3">kΩ</option>
+                            <option value="1e6">MΩ</option>
+                            <option value="1e-1">dΩ</option>
+                            <option value="1e-2">cΩ</option>
+                            <option value="1e-3">mΩ</option>
+                            <option value="1e-6">µΩ</option>
+                            <option value="1e-9">nΩ</option>
+                        </select>
+                        <button class="small-button"
+                            onclick="eliminarComponente(this, 'resistencia_ley_ohm')">Eliminar</button>
+                    </div>
+                </div>
+                <button class="small-button" onclick="agregarComponente('resistencia_ley_ohm')">Agregar
+                    Resistencia</button>
+                <button onclick="calcularLeyOhm()">Calcular</button>
+                <select id="tipoConexion">
+                    <option value="serie">Serie</option>
+                    <option value="paralelo">Paralelo</option>
+                </select>
+                <div id="resultadoLeyOhm"></div>
+            </div>
+
+            <div class="section">
+                <h3>Configuración de la Señal Senoidal 1</h3>
+                <div class="Paso a Paso Circuito RLC">
+                    <div id="resultados_paso_paso_ley_ohm"></div>
+                    <canvas id="circuitCanvas" width="500" height="200" style="border:1px solid #000;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let chart;
+        // Carga de datos al abrir la página
+        window.onload = cargarDatos;
+        function cargarDatos() {
+            const datosGuardados = JSON.parse(localStorage.getItem('leyOhmData'));
+            if (datosGuardados) {
+                document.getElementById('voltaje_ley_ohm').value = datosGuardados.voltaje || '';
+                document.getElementById('corriente_ley_ohm').value = datosGuardados.corriente || '';
+                document.getElementById('tipoConexion').value = datosGuardados.tipoConexion || 'serie';
+
+                // Cargar resistencias guardadas
+                const resistenciasContainer = document.getElementById('resistencia_ley_ohm');
+                resistenciasContainer.innerHTML = ''; // Limpiar las resistencias previas
+                datosGuardados.resistencias.forEach(res => {
+                    agregarComponente('resistencia_ley_ohm', res.valor, res.unidad);
+                });
+            }
+        }
+
+        // Función para guardar todos los datos en Local Storage
+        function guardarDatos(dato_guarda) {
+            if (dato_guarda == 'ley_ohm_guardado') {
+                const voltaje = document.getElementById('voltaje_ley_ohm').value;
+                const corriente = document.getElementById('corriente_ley_ohm').value;
+                const tipoConexion = document.getElementById('tipoConexion').value;
+                const resistencias = Array.from(document.querySelectorAll('.resistencia_ley_ohm')).map(res => {
+                    return {
+                        valor: parseFloat(res.querySelector('.valor_resistencia_ley_ohm').value),
+                        unidad: res.querySelector('.unidadResistencia').value
+                    };
+                });
+                const datos = {
+                    voltaje: voltaje,
+                    corriente: corriente,
+                    tipoConexion: tipoConexion,
+                    resistencias: resistencias
+                };
+                localStorage.setItem('leyOhmData', JSON.stringify(datos));
+            }
+        }
+
+
+        // Función para agregar resistencias
+        function agregarComponente(tipo) {
+            let contenedor;
+            // Selecciona el contenedor adecuado según el tipo de componente
+            if (tipo === 'resistencia') {
+                contenedor = document.getElementById('resistencias');
+            } else if (tipo === 'capacitancia') {
+                contenedor = document.getElementById('capacitancias');
+            } else if (tipo === 'resistencia_ley_ohm') {
+                contenedor = document.getElementById('resistencia_ley_ohm');
+            }
+            let nuevoComponente = document.createElement('div');
+            nuevoComponente.className = tipo;
+            if (tipo === 'resistencia') {
+                nuevoComponente.innerHTML = `
+            <input type="number" class="valor_resistencia" value="10">
+            <select class="unidadResistencia">
+                <option value="1">Ω</option>
+                <option value="1e3">kΩ</option>
+                <option value="1e6">MΩ</option>
+                <option value="1e-1">dΩ</option>
+                <option value="1e-2">cΩ</option>
+                <option value="1e-3">mΩ</option>
+                <option value="1e-6">µΩ</option>
+                <option value="1e-9">nΩ</option>
+            </select>
+            <button onclick="eliminarComponente(this, 'resistencia')">Eliminar</button>`;
+            } else if (tipo === 'capacitancia') {
+                nuevoComponente.innerHTML = `
+            <input type="number" class="valor_capacitancia" value="1">
+            <select class="unidadCapacitancia">
+                <option value="1">F</option>
+                <option value="1e3">kF</option>
+                <option value="1e6">MF</option>
+                <option value="1e-1">dF</option>
+                <option value="1e-2">cF</option>
+                <option value="1e-3">mF</option>
+                <option value="1e-6">µF</option>
+                <option value="1e-9">nF</option>
+            </select>
+            <button onclick="eliminarComponente(this, 'capacitancia')">Eliminar</button>`;
+            } else if (tipo === 'resistencia_ley_ohm') {
+                nuevoComponente.innerHTML = `
+            <input type="number" class="valor_resistencia_ley_ohm" value="10">
+            <select class="unidadResistencia">
+                <option value="1">Ω</option>
+                <option value="1e3">kΩ</option>
+                <option value="1e6">MΩ</option>
+                <option value="1e-1">dΩ</option>
+                <option value="1e-2">cΩ</option>
+                <option value="1e-3">mΩ</option>
+                <option value="1e-6">µΩ</option>
+                <option value="1e-9">nΩ</option>
+            </select>
+            <button onclick="eliminarComponente(this, 'resistencia')">Eliminar</button>`;
+            }
+            contenedor.appendChild(nuevoComponente);
+        }
+
+        function eliminarComponente(button, tipo) {
+            let contenedor = button.parentNode;
+            contenedor.parentNode.removeChild(contenedor);
+        }
+        //aqui termina el guradado
+
+        function calcularLeyOhm() {
+            // Función que guarda los datos y realiza el cálculo
+            guardarDatos("ley_ohm_guardado");
+            const voltajeInput = document.getElementById('voltaje_ley_ohm').value;
+            const corrienteInput = document.getElementById('corriente_ley_ohm').value;
+            const voltaje = parseFloat(voltajeInput);
+            const corriente = parseFloat(corrienteInput);
+            const tipoConexion = document.getElementById('tipoConexion').value;
+
+            const resistencias = document.querySelectorAll('.valor_resistencia_ley_ohm');
+            let resistenciaTotalSerie = 0;
+            let resistenciaTotalParalelo = 0;
+
+            // Calcular la resistencia total en serie y paralelo
+            resistencias.forEach(res => {
+                const valor_resistencia = parseFloat(res.value) * parseFloat(res.parentNode.querySelector('.unidadResistencia').value);
+                resistenciaTotalSerie += valor_resistencia;
+                resistenciaTotalParalelo += 1 / valor_resistencia;
+            });
+            resistenciaTotalParalelo = 1 / resistenciaTotalParalelo;
+
+            let resultado = '';
+
+            // Realizar cálculos específicos según el tipo de conexión
+            if (tipoConexion === 'serie') {
+                resultado += `Resistencia Total en Serie (R) = ${resistenciaTotalSerie.toFixed(2)} Ω\n`;
+
+                let corrienteCalculada = corriente;
+                let voltajeCalculado = voltaje;
+
+                // Si falta la corriente, calcularla usando el voltaje y la resistencia en serie
+                if (isNaN(corriente) && !isNaN(voltaje)) {
+                    corrienteCalculada = voltaje / resistenciaTotalSerie;
+                    resultado += `Corriente Total Calculada (I) = ${corrienteCalculada.toFixed(2)} A\n\n`;
+                }
+
+                // Si falta el voltaje, calcularlo usando la corriente y la resistencia en serie
+                if (isNaN(voltaje) && !isNaN(corriente)) {
+                    voltajeCalculado = corriente * resistenciaTotalSerie;
+                    resultado += `Voltaje Total Calculado (V) = ${voltajeCalculado.toFixed(2)} V\n\n`;
+                }
+
+                // Cálculo de voltaje y potencia en cada resistencia en serie
+                resistencias.forEach((res, index) => {
+                    const valor_resistencia = parseFloat(res.value) * parseFloat(res.parentNode.querySelector('.unidadResistencia').value);
+                    const voltajeRes = corrienteCalculada * valor_resistencia;
+                    const potenciaRes = voltajeRes * corrienteCalculada;
+
+                    resultado += `Resistencia R${index + 1}: ${valor_resistencia.toFixed(2)} Ω\n`;
+                    resultado += `   - Voltaje en R${index + 1} = ${voltajeRes.toFixed(2)} V\n`;
+                    resultado += `   - Potencia en R${index + 1} = ${potenciaRes.toFixed(2)} W\n\n`;
+                });
+
+                // Contar el número de resistencias
+                const numeroResistencias = resistencias.length;
+
+                // Llamar a la función para dibujar el circuito en serie con el número de resistencias
+                dibujarCircuito(numeroResistencias, tipoConexion);
+
+            }
+            else if (tipoConexion === 'paralelo') {
+                resultado += `Resistencia Total en Paralelo (R) = ${resistenciaTotalParalelo.toFixed(2)} Ω\n`;
+
+                let voltajeCalculado = voltaje;
+                let corrienteCalculada = corriente;
+
+                // Si falta el voltaje, calcularlo usando la corriente total y la resistencia en paralelo
+                if (isNaN(voltaje) && !isNaN(corriente)) {
+                    voltajeCalculado = corriente * resistenciaTotalParalelo;
+                    resultado += `Voltaje Total Calculado (V) = ${voltajeCalculado.toFixed(2)} V\n\n`;
+                }
+
+                // Si falta la corriente, calcularla usando el voltaje total y la resistencia en paralelo
+                if (isNaN(corriente) && !isNaN(voltaje)) {
+                    corrienteCalculada = voltaje / resistenciaTotalParalelo;
+                    resultado += `Corriente Total Calculada (I) = ${corrienteCalculada.toFixed(2)} A\n\n`;
+                }
+
+                // Cálculo de corriente y potencia en cada resistencia en paralelo
+                resistencias.forEach((res, index) => {
+                    const valor_resistencia = parseFloat(res.value) * parseFloat(res.parentNode.querySelector('.unidadResistencia').value);
+                    const corrienteRes = voltajeCalculado / valor_resistencia;
+                    const potenciaRes = voltajeCalculado * corrienteRes;
+
+                    resultado += `Resistencia R${index + 1}: ${valor_resistencia.toFixed(2)} Ω\n`;
+                    resultado += `   - Corriente en R${index + 1} = ${corrienteRes.toFixed(2)} A\n`;
+                    resultado += `   - Potencia en R${index + 1} = ${potenciaRes.toFixed(2)} W\n\n`;
+                });
+                const numeroResistencias = resistencias.length;
+                dibujarCircuito(numeroResistencias, tipoConexion);
+            } else {
+                resultado += 'Por favor, seleccione un tipo de conexión.\n';
+            }
+
+            document.getElementById('resultados_paso_paso_ley_ohm').innerText = resultado;
+        }
+
+        function calcularImpedancia() {
+            //limpia resultado
+            document.getElementById('resultados').innerHTML = ``;
+            let voltaje_max = parseFloat(document.getElementById('voltaje_max').value);
+            let voltaje_rms = parseFloat(document.getElementById('voltaje_rms').value);
+            const tipoConexion = document.getElementById('tipoConexion_rlc_mode').value;
+            // Resistencia total
+            let resistenciaTotal = 0;
+            const resistencias = document.querySelectorAll('.valor_resistencia');
+            if (tipoConexion === 'serie') {
+                resistencias.forEach(res => {
+                    resistenciaTotal += parseFloat(res.value) * parseFloat(res.parentNode.querySelector('.unidadResistencia').value);
+                });
+            } else if (tipoConexion === 'paralelo') {
+                let inversoResistenciaTotal = 0;
+                resistencias.forEach(res => {
+                    inversoResistenciaTotal += 1 / (parseFloat(res.value) * parseFloat(res.parentNode.querySelector('.unidadResistencia').value));
+                });
+                resistenciaTotal = 1 / inversoResistenciaTotal;
+            }
+
+            let capacitanciaTotal = 0;
+            const capacitancias = document.querySelectorAll('.valor_capacitancia');
+            capacitancias.forEach(cap => {
+                capacitanciaTotal += parseFloat(cap.value) * parseFloat(cap.parentNode.querySelector('.unidadCapacitancia').value);
+            });
+
+            const inductancia = parseFloat(document.getElementById('inductancia').value) *
+                parseFloat(document.getElementById('unidadInductancia').value);
+
+            const frecuencia = parseFloat(document.getElementById('frecuenciaRLC').value);
+            const omega = (2 * Math.PI) * frecuencia; // Frecuencia angular
+            let xl = 0;
+            let xc = 0;
+
+            if (isNaN(voltaje_max) && isNaN(voltaje_rms)) {
+                alert("Error: Ambos voltajes son inválidos.");
+                return
+            } else if (isNaN(voltaje_max) && voltaje_rms > 0) {
+                voltaje_max = voltaje_rms * Math.SQRT2;
+            } else if (isNaN(voltaje_rms) && voltaje_max > 0) {
+                voltaje_rms = voltaje_max / Math.SQRT2;
+            }
+
+            // Calculo de reactancias
+            if (capacitanciaTotal > 0) { xc = 1 / (omega * capacitanciaTotal); }
+            if (inductancia > 0) { xl = omega * inductancia; }
+
+            let zReal, zImag, zModulo, angulo;
+
+            if (tipoConexion === 'serie') {
+                // En serie: Z = R + j(XL - XC)
+                zReal = resistenciaTotal;
+                zImag = xl - xc;
+                zModulo = Math.sqrt(zReal ** 2 + zImag ** 2);
+                angulo = Math.atan2(zImag, zReal) * (180 / Math.PI);
+                document.getElementById('resultados').innerHTML += `
+            <h3>Resultados del Circuito RLC</h3>`;
+            } else if (tipoConexion === 'paralelo') {
+                let inversoZReal = 1 / resistenciaTotal; // Parte real de la resistencia
+                let inversoZImag = 0; // Parte imaginaria inicial
+
+                if (xl > 0) {
+                    inversoZImag += -1 / xl; // Parte imaginaria por inductancia (jXL)
+                }
+                if (xc > 0) {
+                    inversoZImag += 1 / xc; // Parte imaginaria por capacitancia (-jXC)
+                }
+
+                // Sumar las partes inversas para encontrar la impedancia total
+                let inversoZTotalReal = inversoZReal;
+                let inversoZTotalImag = inversoZImag;
+                // Calculando la impedancia total
+                const denominador = inversoZTotalReal * inversoZTotalReal + inversoZTotalImag * inversoZTotalImag;
+                zReal = inversoZTotalReal / denominador;
+                zImag = -inversoZTotalImag / denominador;
+
+                // Cálculo de corrientes en paralelo
+                const iR = resistenciaTotal !== 0 ? voltaje_rms / resistenciaTotal : 0; // Corriente a través de la resistencia (evita infinito)
+                const iL = xl !== 0 ? voltaje_rms / xl : 0; // Corriente a través de la inductancia (evita infinito)
+                const iC = xc !== 0 ? voltaje_rms / xc : 0; // Corriente a través de la capacitancia (evita infinito)
+                const iT = iR + iL + iC; // Corriente total en paralelo
+
+                zModulo = Math.sqrt(zReal ** 2 + zImag ** 2);
+                angulo = Math.atan2(zImag, zReal) * (180 / Math.PI);
+                // Mostrar la corriente total en paralelo
+                document.getElementById('resultados').innerHTML += `
+                        <h3>Resultados del Circuito RLC</h3>
+        <p><strong>Corriente a través de la Resistencia (I<sub>R</sub>):</strong> ${formatSinRedondeo(iR)} A</p>
+        <p><strong>Corriente a través de la Inductancia (I<sub>L</sub>):</strong> ${formatSinRedondeo(iL)} A</p>
+        <p><strong>Corriente a través de la Capacitancia (I<sub>C</sub>):</strong> ${formatSinRedondeo(iC)} A</p>
+        <p><strong>Corriente Total (I<sub>T</sub>):</strong> ${formatSinRedondeo(iT)} A</p>
+        <p>&nbsp;</p>  <!-- Esto agregará un espacio vacío -->`;
+            }
+
+            const iRMS = zModulo !== 0 ? voltaje_rms / zModulo : 0;
+            const potenciaAparente = voltaje_rms * iRMS; // Potencia aparente en VA
+
+            // Potencia activa y reactiva
+            const potenciaActiva = iRMS ** 2 * resistenciaTotal; // P = I^2 * R
+            const potenciaReactiva = iRMS ** 2 * (xl - xc); // Q = I^2 * (XL - XC)
+
+            // Factor de potencia
+            const factorPotencia = zModulo !== 0 ? zReal / zModulo : 0;
+
+            // Frecuencia de resonancia (si L y C están presentes)
+            const frecuenciaResonancia = inductancia > 0 && capacitanciaTotal > 0 ?
+                (1 / (2 * Math.PI * Math.sqrt(inductancia * capacitanciaTotal))) : 0;
+
+            convertirARectangular_automatico(zModulo, angulo);
+            actualizarGrafico_automatico(voltaje_rms, factorPotencia, frecuencia, omega); // Llama a actualizarGrafico con los valores necesarios
+            document.getElementById('resultados').innerHTML += `
+        <p><strong>Voltaje Max (V):</strong> ${formatSinRedondeo(voltaje_max)} V</p>
+        <p><strong>Voltaje Rms (V):</strong> ${formatSinRedondeo(voltaje_rms)} V</p>
+        <p><strong>Corriente RMS (I<sub>RMS</sub>):</strong> ${formatSinRedondeo(iRMS)} A</p>
+        <p><strong>Resistencia Total (X<sub>L</sub>):</strong> ${formatSinRedondeo(resistenciaTotal)} Ω</p>
+        <p><strong>Reactancia Inductiva (X<sub>L</sub>):</strong> ${formatSinRedondeo(xl)} Ω</p>
+        <p><strong>Reactancia Capacitiva (X<sub>C</sub>):</strong> ${xc === 0 ? "0" : formatSinRedondeo(xc)} Ω</p>
+        <p><strong>Impedancia Total (Z):</strong> ${formatSinRedondeo(zReal)} + ${formatSinRedondeo(zImag)}j Ω</p>
+        <p><strong>Impedancia en Forma Polar:</strong> Z:${isFinite(zModulo) ? formatSinRedondeo(zModulo) : "∞"} ∠ ${formatSinRedondeo(angulo)}°</p>
+        <p><strong>Velocidad Angular (ω):</strong> ${formatSinRedondeo(omega)}</p>
+        <p>&nbsp;</p>  <!-- Esto agregará un espacio vacío -->
+        <p><strong>Potencia Aparente (S):</strong> ${formatSinRedondeo(potenciaAparente)} VA</p>
+        <p><strong>Potencia Activa (P):</strong> ${formatSinRedondeo(potenciaActiva)} W</p>
+        <p><strong>Potencia Reactiva (Q):</strong> ${formatSinRedondeo(potenciaReactiva)} VAR</p>
+        <p><strong>Factor de Potencia (FP):</strong> ${formatSinRedondeo(factorPotencia)}</p>
+        <p><strong>Frecuencia de Resonancia (f<sub>res</sub>):</strong> ${frecuenciaResonancia > 0 ? formatSinRedondeo(frecuenciaResonancia) : "N/A"} Hz</p>`;
+
+            // Detalles paso a paso
+            document.getElementById('resultados_paso_paso_rlc').innerHTML = `
+        <h3>Paso a Paso de los Cálculos</h3>
+        <p>1. <strong>Frecuencia Angular (ω):</strong> ω = 2πf = 2 × 3.1416 × ${frecuencia} = ${formatSinRedondeo(omega)} rad/s</p>
+        <p>2. <strong>Reactancia Inductiva (X<sub>L</sub>):</strong> X<sub>L</sub> = ωL = ${formatSinRedondeo(omega)} × ${inductancia} = ${formatSinRedondeo(xl)} Ω</p>
+        <p>3. <strong>Reactancia Capacitiva (X<sub>C</sub>):</strong> X<sub>C</sub> = 1 / (ωC) = ${xc === 0 ? "N/A" : `1 / (${formatSinRedondeo(omega)} × ${capacitanciaTotal})`} = ${formatSinRedondeo(xc)} Ω</p>
+        <p>4. <strong>Impedancia Total (Z):</strong> Para serie: Z = R + j(X<sub>L</sub> - X<sub>C</sub>) = ${formatSinRedondeo(resistenciaTotal)} + j(${formatSinRedondeo(xl)} - ${formatSinRedondeo(xc)}) = ${formatSinRedondeo(zReal)} + ${formatSinRedondeo(zImag)}j</p>
+        <p>5. <strong>Impedancia en Forma Polar:</strong> |Z| = √(R² + (X<sub>L</sub> - X<sub>C</sub>)²) = √(${formatSinRedondeo(zReal)}² + ${formatSinRedondeo(zImag)}²) = ${formatSinRedondeo(zModulo)} Ω</p>
+        <p>6. <strong>Ángulo de Impedancia:</strong> φ = arctan(X<sub>L</sub> - X<sub>C</sub> / R) = arctan(${formatSinRedondeo(zImag)} / ${formatSinRedondeo(zReal)}) = ${formatSinRedondeo(angulo)}°</p>
+        <p>7. <strong>Corriente RMS (I<sub>RMS</sub>):</strong> I<sub>RMS</sub> = V<sub>rms</sub> / |Z| = ${formatSinRedondeo(voltaje_rms)} / ${formatSinRedondeo(zModulo)} = ${formatSinRedondeo(iRMS)} A</p>
+                <p>&nbsp;</p>  <!-- Esto agregará un espacio vacío -->
+        <p>8. <strong>Potencia Aparente (S):</strong> S = V<sub>rms</sub> × I<sub>RMS</sub> = ${formatSinRedondeo(voltaje_rms)} × ${formatSinRedondeo(iRMS)} = ${formatSinRedondeo(potenciaAparente)} VA</p>
+        <p>9. <strong>Potencia Activa (P):</strong> P = I<sub>RMS</sub>² × R = ${formatSinRedondeo(iRMS)}² × ${formatSinRedondeo(resistenciaTotal)} = ${formatSinRedondeo(potenciaActiva)} W</p>
+        <p>10. <strong>Potencia Reactiva (Q):</strong> Q = I<sub>RMS</sub>² × (X<sub>L</sub> - X<sub>C</sub>) = ${formatSinRedondeo(iRMS)}² × (${formatSinRedondeo(xl)} - ${formatSinRedondeo(xc)}) = ${formatSinRedondeo(potenciaReactiva)} VAR</p>
+        <p>11. <strong>Factor de Potencia (FP):</strong> FP = P / S = ${formatSinRedondeo(potenciaActiva)} / ${formatSinRedondeo(potenciaAparente)} = ${formatSinRedondeo(factorPotencia)}</p>`;
+        }
+
+        function convertirAPolar() {
+            const x = parseFloat(document.getElementById('real').value);
+            const y = parseFloat(document.getElementById('imag').value);
+
+            const r = Math.sqrt(x ** 2 + y ** 2).toFixed(2);
+            const theta = Math.atan2(y, x).toFixed(2);
+
+            document.getElementById('polarOutput').innerText = `Forma Polar: r = ${r}, θ = ${theta} rad`;
+
+            representarEnPlanoComplejo(x, y);
+        }
+
+        function convertirARectangular() {
+            const r = parseFloat(document.getElementById('modulo').value);
+            const theta = parseFloat(document.getElementById('angulo').value);
+
+            const x = (r * Math.cos(theta)).toFixed(2);
+            const y = (r * Math.sin(theta)).toFixed(2);
+
+            document.getElementById('rectangularOutput').innerText = `Forma Rectangular:\n x = ${x}, y = ${y} || Z:${formatSinRedondeo(r)} ∠${formatSinRedondeo(theta)}°`;
+
+            representarEnPlanoComplejo(x, y);
+        }
+
+        function representarEnPlanoComplejo(x, y) {
+            const ctx = document.getElementById('complexPlane').getContext('2d');
+            ctx.clearRect(0, 0, 800, 800); // Ajustar tamaño del rectángulo a 800x800
+
+            // Dibuja los ejes
+            ctx.beginPath();
+            ctx.moveTo(400, 0);
+            ctx.lineTo(400, 800);
+            ctx.moveTo(0, 400);
+            ctx.lineTo(800, 400);
+            ctx.strokeStyle = '#000';
+            ctx.stroke();
+
+            // Representar el punto en el plano
+            ctx.beginPath();
+            ctx.arc(400 + x * 10, 400 - y * 10, 5, 0, 2 * Math.PI); // Escala los puntos
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function actualizarGrafico() {
+            const amplitud = parseFloat(document.getElementById('amplitud').value);
+            const fase = parseFloat(document.getElementById('fase').value);
+            let frecuencia = parseFloat(document.getElementById('frecuenciaSen').value);
+            let omega = parseFloat(document.getElementById('omegaSen').value);
+            if (isNaN(frecuencia) && isNaN(omega)) {
+                alert("Por favor, ingresa un valor válido para frecuencia o ω.");
+                return;
+            }
+            // Validación de frecuencia
+            if (isNaN(frecuencia) || frecuencia <= 0) {
+                frecuencia = omega / (2 * Math.PI);
+            }
+
+            // Cálculo de omega si no se ha proporcionado
+            if (isNaN(omega) || omega <= 0) {
+                omega = 2 * Math.PI * frecuencia; // calcular omega desde frecuencia
+            }
+
+            const periodo = 1 / frecuencia; // calcular periodo a partir de frecuencia
+
+            const xValues = [];
+            const yValues = [];
+
+            for (let t = 0; t <= 2 * periodo; t += 0.001) {
+                xValues.push(t.toFixed(3));
+                yValues.push(amplitud * Math.sin(omega * t + fase));
+            }
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: `${amplitud} sen(${omega.toFixed(2)} t + ${fase.toFixed(2)})`, // Mostrar omega
+                        data: yValues,
+                        borderColor: 'blue',
+                        fill: false,
+                    }],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tiempo (s)',
+                            },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Amplitud (V)',
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        function actualizarGrafico_automatico(amplitud, fase, frecuencia, omega) {
+            let periodo = 1 / frecuencia; // calcular periodo a partir de frecuencia
+
+            const xValues = [];
+            const yValues = [];
+
+            for (let t = 0; t <= 2 * periodo; t += 0.001) {
+                xValues.push(t.toFixed(3));
+                yValues.push(amplitud * Math.sin(omega * t + fase));
+            }
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: `${amplitud} sen(${omega.toFixed(2)} t + ${fase.toFixed(2)})`, // Mostrar omega
+                        data: yValues,
+                        borderColor: 'blue',
+                        fill: false,
+                    }],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tiempo (s)',
+                            },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Amplitud (V)',
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        function convertirAPolar_automatico(x, y) {
+            const r = Math.sqrt(x ** 2 + y ** 2).toFixed(2);
+            const theta = Math.atan2(y, x).toFixed(2);
+
+            document.getElementById('polarOutput').innerText = `Forma Polar: r = ${r}, θ = ${theta} rad`;
+
+            representarEnPlanoComplejo(x, y);
+        }
+
+        function convertirARectangular_automatico(zModulo, angulo) {
+            const x = (zModulo * Math.cos(angulo)).toFixed(2);
+            const y = (zModulo * Math.sin(angulo)).toFixed(2);
+
+            document.getElementById('rectangularOutput').innerText = `Forma Rectangular:\n x = ${x}, y = ${y} || Z:${formatSinRedondeo(zModulo)} ∠${formatSinRedondeo(angulo)}°`;
+
+            representarEnPlanoComplejo(x, y);
+        }
+
+        function buscarPalabra() {
+            const input = document.getElementById('buscador').value.toLowerCase();
+            const textos = document.querySelectorAll('.capitulo p');
+
+            // Limpiar el resaltado anterior
+            textos.forEach(texto => {
+                const contenido = texto.innerText;
+                texto.innerHTML = contenido; // Restablecer el HTML original
+            });
+
+            if (input) {
+                // Resaltar la palabra buscada
+                textos.forEach(texto => {
+                    const contenido = texto.innerText;
+                    const regex = new RegExp(`(${input})`, 'gi');
+                    const nuevoContenido = contenido.replace(regex, '<span class="highlight">$1</span>');
+                    texto.innerHTML = nuevoContenido; // Aplicar resaltado
+                });
+            }
+        }
+
+        //function pagina y ultilidades
+        function mostrarSeccion(seccion) {
+            document.getElementById('palabra').style.display = 'none';
+            document.getElementById('rlc').style.display = 'none';
+            document.getElementById('ohm').style.display = 'none';
+            document.getElementById(seccion).style.display = 'block';
+        }
+
+        function toggleCapitulo(id) {
+            const capitulo = document.getElementById(id);
+            capitulo.classList.toggle('hidden'); // Alternar la clase 'hidden'
+        }
+
+        const formatSinRedondeo = (num) => {
+            return (Math.floor(num * 100) / 100).toFixed(2);
+        };
+
+        function dibujarCircuito(numResistencias, tipoConexion) {
+
+            // Verificar el tipo de conexión
+            if (tipoConexion === 'serie') {
+                const canvas = document.getElementById('circuitCanvas');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const espacioEntreResistencias = 60;
+                let x = 50;
+                const y = 100;
+
+                // Dibujar la fuente de voltaje
+                ctx.beginPath();
+                ctx.moveTo(20, y);
+                ctx.lineTo(40, y);
+                ctx.stroke();
+
+                ctx.fillText("V", 15, y - 10);
+
+                // Dibujar cada resistencia
+                for (let i = 0; i < numResistencias; i++) {
+                    // Líneas de conexión
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + 20, y);
+                    ctx.stroke();
+
+                    // Rectángulo de resistencia
+                    ctx.strokeRect(x + 20, y - 10, 40, 20);
+                    ctx.fillText(`R${i + 1}`, x + 25, y - 15);
+
+                    x += espacioEntreResistencias;
+                }
+
+                // Línea final después de la última resistencia
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 20, y);
+                ctx.stroke();
+
+                // Línea de retorno
+                ctx.moveTo(x + 20, y);
+                ctx.lineTo(x + 20, y + 50);
+                ctx.lineTo(20, y + 50);
+                ctx.lineTo(20, y);
+                ctx.stroke();
+
+
+            }
+            else if (tipoConexion === 'paralelo') {
+                // Dibujar resistencias en paralelo
+                const resistenciasPorFila = 4; // Cambiar este valor si se desea más o menos resistencias por fila
+                const filaHeight = 70; // Altura entre filas para las resistencias en paralelo
+                let fila = 0;
+
+                for (let i = 0; i < numResistencias; i++) {
+                    // Líneas de conexión
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + fila * filaHeight);
+                    ctx.lineTo(x + 20, y + fila * filaHeight);
+                    ctx.stroke();
+
+                    // Rectángulo de resistencia
+                    ctx.strokeRect(x + 20, y + fila * filaHeight - 10, 40, 20);
+                    ctx.fillText(`R${i + 1}`, x + 25, y + fila * filaHeight - 15);
+
+                    x += espacioEntreResistencias;
+
+                    // Mover a la siguiente fila si hemos alcanzado el límite de resistencias por fila
+                    if ((i + 1) % resistenciasPorFila === 0) {
+                        x = 50; // Reiniciar x para la siguiente fila
+                        fila++; // Pasar a la siguiente fila
+                    }
+                }
+
+                // Conectar todas las resistencias al mismo voltaje
+                ctx.beginPath();
+                ctx.moveTo(20, y);
+                ctx.lineTo(20, y + (fila + 1) * filaHeight);
+                ctx.stroke();
+
+                // Línea de retorno
+                ctx.moveTo(20, y + (fila + 1) * filaHeight);
+                ctx.lineTo(20, y + (fila + 1) * filaHeight + 50);
+                ctx.lineTo(20, y + 50);
+                ctx.stroke();
+            } else {
+                console.error("Tipo de conexión no válido.");
+            }
+        }
+
+        function copiarAlPortapapeles() {
+            // Selecciona el contenedor de los datos
+            const dataContainer = document.getElementById("resultados");
+
+            // Extrae el texto de los elementos `p` dentro del contenedor, uniendo con saltos de línea
+            const textToCopy = Array.from(dataContainer.querySelectorAll("p"))
+                .map(p => p.textContent.trim()) // Elimina posibles espacios extra al inicio o final
+                .join("\n\n"); // Doble salto de línea entre párrafos
+            // Copia el texto al portapapeles
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("Datos copiados al portapapeles!");
+            }).catch(err => {
+                console.error("Error al copiar al portapapeles:", err);
+            });
+        }
+
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            // Guarda la preferencia de tema en localStorage
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Verifica si hay un tema guardado en localStorage al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
